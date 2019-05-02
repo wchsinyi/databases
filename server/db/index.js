@@ -5,3 +5,13 @@ var mysql = require('mysql');
 // and to the database "chat".
 
 
+// create a connection between database and node
+// then export the database
+
+var messageDB = mysql.createConnection({
+    user: 'student',
+    password: 'student',
+    database: 'chat'
+  });
+
+module.exports.messagesDB = messageDB;
