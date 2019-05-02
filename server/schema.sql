@@ -18,7 +18,7 @@ CREATE TABLE messages (
   /* Describe your table here.*/
   usernameID INT,
   msg VARCHAR(25), 
-  roomnameID INT,
+  roomnameID INT
   -- FOREIGN KEY(roomnameID) REFERENCES roomname(roomnameID),
   -- FOREIGN KEY(usernameID) REFERENCES username(usernameID)
 );

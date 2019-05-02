@@ -56,9 +56,16 @@ describe('Persistent Node Chat Server', function() {
 
         // Now if we look in the database, we should find the
         // posted message there.
-        var insert = 'INSERT INTO messages (messageID) VALUES (3); '
-        dbConnection.query(insert, (err, results) => {
+        var insert = 'INSERT INTO messages (roomnameID, usernameID, msg) VALUES (15, 18, "hiya"); ' ;
+        dbConnection.query(insert, [], ()=> {});
+        var q = 'SELECT * FROM MESSAGES WHERE roomnameID = 15;';
+        dbConnection.query(q, [], function(err, results){
           console.log('I am sending a request');
+          console.log('results', results);
+          console.log('typeof results', typeof(results));
+          for (let p in results) {
+            console.log(p, results[p].usernameID)            
+          }
         });
         // TODO: You might have to change this test to get all the data from
         // your message table, since this is schema-dependent.
