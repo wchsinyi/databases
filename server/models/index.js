@@ -2,27 +2,24 @@ var db = require('../db');
 
 module.exports = {
   messages: {
-    get: function (request, response) {
-      db.messagesDB.connect();
-      // response.send('Message get');
-      response.send(JSON.stringify(
-        [{msg:'Men like you can never change!', name:'fred'}]
-      ));
+    get: function (qStr) {
+      // messageID should be aut
+      var query = `INSERT INTO messages (messageID, userID, message) VALUE (${messageID}, ${userID}, ${message})`
+      db.query(query, [], function(err, results){
+        console.log("sucessfully posted a message")
+      });
     }, // a function which produces all the messages
-    post: function (request, response) {
-      response.send('Message post!')
+    post: function () {
 
     } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
-    get: function (request, response) {
-      response.send('User get!')
+    get: function () {
 
     },
-    post: function (request, response) {
-      response.send('User post!')
+    post: function () {
     }
   }
 };
