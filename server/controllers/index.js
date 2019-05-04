@@ -5,7 +5,13 @@ module.exports = {
     get: function (req, res) {
       
     }, // a function which handles a get request for all messages
-    post: function (req, res) {} // a function which handles posting a message to the database
+    post: function (req, res) {
+      return new Promise( (resolve, reject)=>{
+        var loginUser = req.headers.json.username;
+        console.log(loginUser);
+      })
+
+    } // a function which handles posting a message to the database
   },
 
   users: {
