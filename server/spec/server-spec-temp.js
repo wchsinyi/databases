@@ -5,7 +5,7 @@ var mysql = require('mysql');
 var request = require('request'); // You might need to npm install the request module!
 var expect = require('chai').expect;
 
-xdescribe('Persistent Node Chat Server', function() {
+describe('Persistent Node Chat Server', function() {
   var dbConnection;
 
   beforeEach(function(done) {
@@ -20,14 +20,21 @@ xdescribe('Persistent Node Chat Server', function() {
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query('USE chat; SELECT * FROM messages;', (err, data)=> {
-      console.log('beforeEach data', data);
-      console.log('beforeEach typeof data', typeof data);
+    console.log('initially here')
+    dbConnection.query('SELECT * FROM messages;', (err, data)=> {
+      if (err){
+        throw err;
+      } else {
+        console.log('beforeEach data', data);
+        console.log('beforeEach typeof data', typeof data);  
+        for (let i in data) {
+          console.log(data[i]);
+        }
+      }
       done();
     });
 
     // dbConnection.query('truncate ' + tablename, done);
-    // dbConnection.query('USE chat; SELECT * FROM messages;', done);
   });
 
   afterEach(function() {
@@ -41,7 +48,27 @@ xdescribe('Persistent Node Chat Server', function() {
       uri: 'http://127.0.0.1:3000/classes/users',
       json: { username: 'Valjean' }
     }, function () {
-      console.log('success of request I')
+      var insert = `insert into users (username) VALUES ("Holly Mary")`
+      dbConnection.query(insert, [], (err, data)=> {
+        if (err){
+          console.log('err', err);
+        } 
+      });
+
+
+      dbConnection.query('SELECT * FROM users;', (err, data)=> {
+        if (err){
+          throw err;
+        } else {
+          console.log('user data', data);
+          console.log('beforeEach typeof user data', typeof data);  
+          for (let i in data) {
+            console.log(data[i].username);
+          }
+        }
+        done();
+      });
+  
       // Post a message to the node chat server:
       request({
         method: 'POST',
@@ -52,26 +79,42 @@ xdescribe('Persistent Node Chat Server', function() {
           roomname: 'Hello'
         }
       }, function () {
-        console.log('success of request II')
+          console.log('success of request II')
+          var q = `SELECT * FROM messages WHERE roomname = 'Hello';`;
+          dbConnection.query(q, [], function(err, results){
+            if (err) {
+              throw err;
+            } else {
+              console.log('results', results);
+              console.log('typeof results', typeof(results));
+              for (let p in results) {
+                console.log(p, results[p].usernameID)            
+                }
+              done();
+            }
+            done(); 
+          });
+
+        // }
 
         // Now if we look in the database, we should find the
         // posted message there.
-        var insert = 'INSERT INTO messages (roomnameID, usernameID, msg) VALUES (15, 18, "hiya"); ' ;
-        dbConnection.query(insert, [], ()=> {});
-        var q = 'SELECT * FROM MESSAGES WHERE roomnameID = 15;';
-        dbConnection.query(q, [], function(err, results){
-          console.log('I am sending a request');
-          console.log('results', results);
-          console.log('typeof results', typeof(results));
-          for (let p in results) {
-            console.log(p, results[p].usernameID)            
-          }
-        });
+        // var insert = 'insert into messages(message, userID, roomname) \
+        // value (`hi whats up`, (select id from users where username = `Valjean` limit 1), `green room`)';
+
+        // dbConnection.query(insert, [], (err, data)=> {
+        //   if (err){
+        //     console.log('err', err);
+        //   } else {
+        //     console.log(data);
+        //   }
+        // });
+
         // TODO: You might have to change this test to get all the data from
         // your message table, since this is schema-dependent.
         var queryString = 'SELECT * FROM messages';
         var queryArgs = [];
-
+        console.log("where are we?")
         dbConnection.query(queryString, queryArgs, function(err, results) {
           console.log('success of request III')
           console.log('results', results)

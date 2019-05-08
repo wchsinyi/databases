@@ -8,10 +8,21 @@ var mysql = require('mysql');
 // create a connection between database and node
 // then export the database
 
+
+// https://stackoverflow.com/questions/30545749/how-to-provide-a-mysql-database-connection-in-single-file-in-nodejs
+
+
+
 var messageDB = mysql.createConnection({
     user: 'student',
     password: 'student',
     database: 'chat'
   });
 
-module.exports.messagesDB = messageDB;
+messageDB.connect(function(err) {
+  if (err) {
+      console.error('error connecting: ' + err.stack);
+      return;
+  }
+});
+module.exports = messageDB;

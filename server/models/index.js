@@ -13,10 +13,11 @@ module.exports = {
       });
     }, // a function which produces all the messages
     post: function (option, callback) {
-      var query = `INSERT INTO messages (roomname, userID, message) VALUE (${option.roomname}, (SELECT userID FROM users where username = ${option.username}), ${option.message})`
+      var query = `INSERT INTO messages (roomname, userID, message) \
+      VALUES ("${option.roomname}", (SELECT userID FROM users where username = "${option.username}" limit 1),  "${option.message}")`;
       db.query(query, [], function(err, results){
         if (err) {
-          throw err;
+          callback(err, null);
         } else {
           callback(null, results);
         }
@@ -27,6 +28,7 @@ module.exports = {
   users: {
     // Ditto as above.
     get: function (callback) {
+      console.log('getting users');
       var query = `SELECT * FROM users`;
       db.query(query, [], function(err, results){
         if (err) {
@@ -37,10 +39,10 @@ module.exports = {
       });
     },
     post: function (option, callback) {
-      var query = `INSERT INTO users (username) VALUE (${username})`
+      var query = `INSERT INTO users (username) VALUE ("${option.username}")`
       db.query(query, [], function(err, results){
         if (err) {
-          throw err;
+          callback(err, null);
         } else {
           callback(null, results);
         }
